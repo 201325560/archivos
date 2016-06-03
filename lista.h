@@ -13,17 +13,19 @@ typedef struct Nodo nodo;
 typedef struct Nodo * ptrnodo;
 ptrnodo primero;
 
-void insertar(ptrnodo *primero, const char *palabra);
+void insertar(ptrnodo *primero, char palabra[]);
 void iniciar(ptrnodo *THIS, const char *palabra);
 int  contiene(const char *palabra);
 void crearlista(){
     primero = NULL;
 }
 
-void insertar(ptrnodo *primero, const char *palabra){
+void insertar(ptrnodo *primero,  char palabra []){
     ptrnodo nuevo = (ptrnodo)malloc(sizeof(nodo));
+    char palabra1 [1024]={};
+    strcpy(palabra1,palabra);
     if(nuevo!=NULL){
-     iniciar(&nuevo,palabra);
+     iniciar(&nuevo,&palabra1[0]);
      nuevo->sig=(*primero);
      (*primero)=nuevo;
     }else{
