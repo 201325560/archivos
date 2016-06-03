@@ -17,7 +17,10 @@ static char letras [] = {'a','b','c','d','e','f','g',
                   'P','M','Q','R','S','T','U'
                   ,'V','W','X','Y','Z'};
 
-static char * palabras [] = {"copiar","pegar","ejemplo","uno"};
+static char * palabras [] = {"mkdisk","rmdisk","fdisk","mount","unmount","size",
+                             "unit","path","id","type","fit","delete","name",
+                             "add","mkfs","mkfile","cat","rem","edit","ren",
+                             "mkdir","cp","mv","find","cont","p","dest","iddest"};
 static int numeros [] = {0,1,2,3,4,5,6,7,8,9};
 static char simbolos []= {};
 static int ESTADO=0;
@@ -135,7 +138,7 @@ void limpiar_vector(char v []){
 }
 
 static int Esreservada(char *palabra){
-  int tamano = 4;
+  int tamano = 28;
   int i =0;
   for(;i<tamano; i++){
       if(strcmp(palabra,palabras[i])==0){
