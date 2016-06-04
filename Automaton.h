@@ -17,18 +17,18 @@ static char letras [] = {'a','b','c','d','e','f','g',
                   'P','M','Q','R','S','T','U'
                   ,'V','W','X','Y','Z'};
 
-static char * palabras [] = {"mkdisk","rmdisk","fdisk","mount","unmount","size",
-                             "unit","path","id","type","fit","delete","name",
-                             "add","mkfs","mkfile","cat","rem","edit","ren",
-                             "mkdir","cp","mv","find","cont","p","dest","iddest"};
-static int numeros [] = {0,1,2,3,4,5,6,7,8,9};
+static char * palabras [] = {"mkdisk","rmdisk","fdisk","-mount","-unmount","-size",
+                             "-unit","-path","-id","-type","-fit","-delete","-name",
+                             "-add","-mkfs","-mkfile","-cat","-rem","-edit","-ren",
+                             "mkdir","-cp","-mv","-find","-cont","-p","-dest","-iddest"};
+static int numeros [] = {'0','1','2','3','4','5','6','7','8','9'};
 static char simbolos []= {};
 static int ESTADO=0;
 static int salto_linea = (int)'\n';
 static int espacio_blanco = (int)' ';
 static int Esletra(char letra);
 static int Esreservada(char * palabra);
-static int Esnumero(int numero);
+static int Esnumero(char numero);
 static void minusculas(char *s);
 char * stchcat(char cadena[], char chr);
 
@@ -51,7 +51,20 @@ void lexer(char buffer [] ){
               ESTADO=0;
             }else if((int)(buffer[i])==espacio_blanco){
               ESTADO=0;
-            }else if(Esletra(buffer[i])==1){
+            }else if(Esletra(buffer[i])==1||Esnumero(buffer[i])){
+                dato[pos_vector++]=buffer[i];
+                ESTADO=1;
+            }else if((int)buffer[i]==(int)'/'){
+                dato[pos_vector++]=buffer[i];
+                ESTADO=1;
+            }else if((int)buffer[i]==(int)'.'){
+                dato[pos_vector++]=buffer[i];
+                ESTADO=1;
+            }else if((int)buffer[i]==(int)':'&&primero!=NULL){
+                limpiar_vector(dato);
+                pos_vector=0;
+                ESTADO=3;
+            }else if((int)buffer[i]==(int)'-'){
                 dato[pos_vector++]=buffer[i];
                 ESTADO=1;
             }
@@ -72,11 +85,47 @@ void lexer(char buffer [] ){
                 pos_vector=0;
                 ESTADO=0;
                 limpiar_vector(dato);
-            }else if(Esletra((buffer[i]))==1){
+            }else if(Esletra((buffer[i]))==1||Esnumero(buffer[i])==1){
                 dato[pos_vector++]=buffer[i];
+            }else if((int)buffer[i]==(int)'/'){
+                dato[pos_vector++]=buffer[i];
+            }else if((int)buffer[i]==(int)'.'){
+                dato[pos_vector++]=buffer[i];
+            }else if((int)buffer[i]==(int)':'){
+                if(Esreservada(dato)){
+                    insertar(&primero,dato);
+                    pos_vector=0;
+                    ESTADO=3;
+                }else{
+                    printf("%s","The token found ist'n a keyword");
+                    printf("%s","\n");
+                    printf("%s","ERRONEUS TOKEN: ");
+                    printf("%s",&dato[0]);
+                    printf("%s","\n");
+                    pos_vector=0;
+                    ESTADO=0;
+                }
+                limpiar_vector(dato);
             }
-
-
+            break;
+        case 2:
+            break;
+        case 3:
+            if((int)(buffer[i])==salto_linea||(int)(buffer[i])==espacio_blanco){
+                setComando(&primero,dato);
+                pos_vector=0;
+                ESTADO=0;
+                limpiar_vector(dato);
+            }else if(Esletra((buffer[i]))==1||Esnumero(buffer[i])==1){
+                dato[pos_vector++]=buffer[i];
+            }else if((int)buffer[i]==(int)'/'){
+                dato[pos_vector++]=buffer[i];
+            }else if((int)buffer[i]==(int)'.'){
+                dato[pos_vector++]=buffer[i];
+            }else if((int)buffer[i]==(int)':'){
+                pos_vector=0;
+                limpiar_vector(dato);
+            }
             break;
         }
         i++;
@@ -95,11 +144,11 @@ static int Esletra(char letra){
     return 0;
 }
 
-static int Esnumero(int numero){
-    int tamano = strlen(numeros);
+static int Esnumero(char  numero){
+    int tamano = 10;
     int i =0;
     for(i=0; i<tamano; i++){
-        if(numero==numeros[i]){
+        if((int)numero==(int)numeros[i]){
             return 1;
         }
     }

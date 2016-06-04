@@ -12,7 +12,7 @@ int main(void)
 {
 
         char  texto [300];
-    do{
+    //do{
     printf("ingrese un comando!\n\nO cero para salir\n\n");
     fgets(texto,300,stdin);
     //lexer(&texto[0]);
@@ -22,7 +22,7 @@ int main(void)
     ptrnodo aux = (ptrnodo)malloc(sizeof(nodo));
     aux=primero;
     ejecutar(&aux);
-    }while(strcmp(texto,"0")==1);
+    //}while(strcmp(texto,"0")==1);
 
 
     return 0;
