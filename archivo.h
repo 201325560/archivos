@@ -16,6 +16,8 @@ typedef struct Archivo * ptrArchivo;
 void setSize(ptrArchivo * arc,int size);
 void setUnit(ptrArchivo * arc,char unit);
 void setPath(ptrArchivo * arc,char path[]);
+void calcularsize(ptrArchivo *arc);
+void default_size(ptrArchivo *arc);
 
 void setPath(ptrArchivo *arc, char path[]){
     strcpy((*arc)->path,path);
@@ -26,15 +28,19 @@ void setUnit(ptrArchivo *arc, char unit){
         (*arc)->unit=1024;
     }else if((int)unit==(int)'m'){
         (*arc)->unit=1024*1024;
-    }else{
-        (*arc)->unit=1024*1024;
     }
 }
 
 void setSize(ptrArchivo *arc, int size){
-    (*arc)->size = (*arc)->unit*size;
+    (*arc)->size = size;
 }
 
+void calcularsize(ptrArchivo *arc){
+    (*arc)->size=(*arc)->unit*(*arc)->size;
+}
 
+void default_size(ptrArchivo *arc){
+    (*arc)->unit=1024*1024;
+}
 
 #endif // ARCHIVO_H

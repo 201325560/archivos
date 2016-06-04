@@ -3,7 +3,7 @@
 #include "ejecutar.h"
 extern void lexer(char buffer[]);
 extern void leer(char buffer[]);
-extern void ejecutar(ptrnodo *primero);
+extern void ejecutar_crear_disco(ptrnodo *primero);
 extern void crearlista();
 extern void insertar(ptrnodo *primero, char palabra [],ptrnodo *ultimo);
 extern int contiene(const char *palabra);
@@ -22,7 +22,15 @@ int main(void)
     ptrnodo aux = (ptrnodo)malloc(sizeof(nodo));
     printf("%i",size);
     aux=primero;
-    ejecutar(&aux);
+    //correr();
+    correr();
+    correr3();
+    ejecutar_crear_disco(&aux);
+    printf("%s",ARCHIVO->path);
+    printf("\n");
+    printf("%i",ARCHIVO->size);
+    printf("\n");
+    printf("%i",ARCHIVO->unit);
     //}while(strcmp(texto,"0")==1);
 
 
