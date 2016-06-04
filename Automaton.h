@@ -34,8 +34,8 @@ char * stchcat(char cadena[], char chr);
 
 
 void lexer(char buffer []);
-
-
+void leer(char buffer[]);
+void ejecutar(ptrnodo *aux);
 
 void lexer(char buffer [] ){
     int  i =0;
@@ -146,6 +146,100 @@ static int Esreservada(char *palabra){
         }
     }
   return 0;
+}
+
+void leer(char buffer[]){
+    FILE *ptrCf;
+    char hola[10000];
+    if ( ( ptrCf = fopen( "/home/daniel/scrip.dat", "r" ) ) == NULL ) {
+    printf( "No pudo abrirse el archivo.\n");
+    }
+    else {
+    while (!feof(ptrCf)) {
+    fgets(hola,10000,ptrCf);
+    strcat(buffer,hola);
+    }
+    fclose( ptrCf ); /* fclose cierra el archivo */
+    }
+}
+void ejecutar(ptrnodo *aux){
+
+
+    while(aux!=NULL){
+        char *palabra="";
+        palabra=(*aux)->palabra;
+        if(strcmp(palabra,"rmdisk")==0){
+            (*aux)=(*aux)->sig;
+            printf("se eliminira un disco\n");
+            char*espacio=" ";
+            char cadena[20];
+            char eli[100]="";
+            char*p="rm";
+            strcat(eli,p);
+            strcat(eli,espacio);
+            //strcat(eli,(*aux)->comando);
+            printf("seguro de eliminar el disco:\n");
+            printf("1. SI:\n");
+            printf("2. NO:\n");
+            fgets(cadena,100,stdin);
+            if(strcmp(cadena,"1\n")==0){
+            //solo con una diagonal para eliminar
+            system(eli);
+            }else{
+                printf("ya no se elimino el disco..\n");
+            }
+        }else if(strcmp((*aux)->palabra,"mkdisk")==0){
+/************************************duda*****************************************/
+            const char*unit="k";
+            int ta=atoi("100");
+            int byt=1024;
+            int mbyt=1024*1024;
+            int totalD=0;
+            if(strcmp(unit,"k")==0){
+                totalD=ta*byt;
+            }else if(strcmp(unit,"m")==0){
+                totalD=ta*mbyt;
+            }else{
+                totalD=ta*mbyt;
+            }
+            if(ta>0){
+           printf("\nse creara un disco\n");
+           char*dire="";
+           char*espacio=" ";
+           char*p=" dd if=/dev/zero of=";
+           char*p1="bs= ";
+           char*p2=" count=1 ";
+           strcat(dire,p);
+           strcat(dire,"/home/daniel/nuevo.txt ");
+           strcat(dire,p1);
+           strcat(dire,"1024 ");
+           strcat(dire,p2);
+           char cap[25]="";
+         //  itoa(totalD,cap,10);
+           strcat(dire,cap);
+           //printf("\n%s",dire);
+           char*pr="dd if=/dev/zero of=/home/daniel/prueba.txt bs=1024 count=1";
+           printf("%s",dire);
+           system(dire);
+            }else{
+                printf("error...... tamaño tiene q ser mayor a 0\n");
+            }
+/*****************************************************************************/
+
+
+        (*aux)=(*aux)->sig;
+        if(strcmp((*aux)->palabra,"size")==0){
+
+        }else if(strcmp((*aux)->palabra,"unit")==0){
+
+        }else if(strcmp((*aux)->palabra,"path")==0){
+
+        }else{
+
+        }
+        }
+
+    }
 }
 
 #endif // AUTOMATON_H
