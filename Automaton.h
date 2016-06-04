@@ -5,7 +5,7 @@
 #include <string.h>
 #include "lista.h"
 extern void crearlista();
-extern void insertar(ptrnodo *primero, char palabra []);
+extern void insertar(ptrnodo *primero, char palabra [],ptrnodo *ultimo);
 extern int contiene(const char *palabra);
 
 static char letras [] = {'a','b','c','d','e','f','g',
@@ -35,9 +35,9 @@ char * stchcat(char cadena[], char chr);
 
 void lexer(char buffer []);
 void leer(char buffer[]);
-void ejecutar(ptrnodo *aux);
 
 void lexer(char buffer [] ){
+    crearlista();
     int  i =0;
     minusculas(&buffer[0]);
     int tamano = strlen(&buffer[0]);
@@ -60,7 +60,7 @@ void lexer(char buffer [] ){
             }else if((int)buffer[i]==(int)'.'){
                 dato[pos_vector++]=buffer[i];
                 ESTADO=1;
-            }else if((int)buffer[i]==(int)':'&&primero!=NULL){
+            }else if((int)buffer[i]==(int)':'&&ultimo!=NULL){
                 limpiar_vector(dato);
                 pos_vector=0;
                 ESTADO=3;
@@ -73,7 +73,7 @@ void lexer(char buffer [] ){
             if((int)(buffer[i])==salto_linea||(int)(buffer[i])==espacio_blanco){
                 if(Esreservada(&dato[0])==1)
                   {
-                    insertar(&primero,dato);
+                    insertar(&primero,dato,&ultimo);
                   }else{
                     printf("%s","The token found ist'n a keyword");
                     printf("%s","\n");
@@ -93,7 +93,7 @@ void lexer(char buffer [] ){
                 dato[pos_vector++]=buffer[i];
             }else if((int)buffer[i]==(int)':'){
                 if(Esreservada(dato)){
-                    insertar(&primero,dato);
+                    insertar(&primero,dato,&ultimo);
                     pos_vector=0;
                     ESTADO=3;
                 }else{
@@ -109,10 +109,18 @@ void lexer(char buffer [] ){
             }
             break;
         case 2:
+            if((int)buffer[i]!=(int)'\"'){
+                dato[pos_vector++]=buffer[i];
+            }else if ((int)buffer[i]=='\"'||(int)buffer[i]==salto_linea){
+                setComando(&ultimo,dato);
+                pos_vector=0;
+                limpiar_vector(dato);
+                ESTADO=0;
+            }
             break;
         case 3:
             if((int)(buffer[i])==salto_linea||(int)(buffer[i])==espacio_blanco){
-                setComando(&primero,dato);
+                setComando(&ultimo,dato);
                 pos_vector=0;
                 ESTADO=0;
                 limpiar_vector(dato);
@@ -125,6 +133,8 @@ void lexer(char buffer [] ){
             }else if((int)buffer[i]==(int)':'){
                 pos_vector=0;
                 limpiar_vector(dato);
+            }else if((int)buffer[i]==(int)'\"'){
+                ESTADO=2;
             }
             break;
         }
@@ -211,84 +221,6 @@ void leer(char buffer[]){
     fclose( ptrCf ); /* fclose cierra el archivo */
     }
 }
-void ejecutar(ptrnodo *aux){
 
-
-    while(aux!=NULL){
-        char *palabra="";
-        palabra=(*aux)->palabra;
-        if(strcmp(palabra,"rmdisk")==0){
-            (*aux)=(*aux)->sig;
-            printf("se eliminira un disco\n");
-            char*espacio=" ";
-            char cadena[20];
-            char eli[100]="";
-            char*p="rm";
-            strcat(eli,p);
-            strcat(eli,espacio);
-            //strcat(eli,(*aux)->comando);
-            printf("seguro de eliminar el disco:\n");
-            printf("1. SI:\n");
-            printf("2. NO:\n");
-            fgets(cadena,100,stdin);
-            if(strcmp(cadena,"1\n")==0){
-            //solo con una diagonal para eliminar
-            system(eli);
-            }else{
-                printf("ya no se elimino el disco..\n");
-            }
-        }else if(strcmp((*aux)->palabra,"mkdisk")==0){
-/************************************duda*****************************************/
-            const char*unit="k";
-            int ta=atoi("100");
-            int byt=1024;
-            int mbyt=1024*1024;
-            int totalD=0;
-            if(strcmp(unit,"k")==0){
-                totalD=ta*byt;
-            }else if(strcmp(unit,"m")==0){
-                totalD=ta*mbyt;
-            }else{
-                totalD=ta*mbyt;
-            }
-            if(ta>0){
-           printf("\nse creara un disco\n");
-           char*dire="";
-           char*espacio=" ";
-           char*p=" dd if=/dev/zero of=";
-           char*p1="bs= ";
-           char*p2=" count=1 ";
-           strcat(dire,p);
-           strcat(dire,"/home/daniel/nuevo.txt ");
-           strcat(dire,p1);
-           strcat(dire,"1024 ");
-           strcat(dire,p2);
-           char cap[25]="";
-         //  itoa(totalD,cap,10);
-           strcat(dire,cap);
-           //printf("\n%s",dire);
-           char*pr="dd if=/dev/zero of=/home/daniel/prueba.txt bs=1024 count=1";
-           printf("%s",dire);
-           system(dire);
-            }else{
-                printf("error...... tamaño tiene q ser mayor a 0\n");
-            }
-/*****************************************************************************/
-
-
-        (*aux)=(*aux)->sig;
-        if(strcmp((*aux)->palabra,"size")==0){
-
-        }else if(strcmp((*aux)->palabra,"unit")==0){
-
-        }else if(strcmp((*aux)->palabra,"path")==0){
-
-        }else{
-
-        }
-        }
-
-    }
-}
 
 #endif // AUTOMATON_H

@@ -7,5 +7,7 @@ SOURCES += main.c
 
 HEADERS += \
     Automaton.h \
-    lista.h
+    lista.h \
+    archivo.h \
+    ejecutar.h
 

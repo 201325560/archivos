@@ -13,28 +13,39 @@ struct Nodo{
 typedef struct Nodo nodo;
 typedef struct Nodo * ptrnodo;
 ptrnodo primero;
-
-void insertar(ptrnodo *primero, char palabra[]);
+ptrnodo ultimo;
+int size=0;
+void insertar(ptrnodo *primero, char palabra[], ptrnodo *ultimo);
 void iniciar(ptrnodo *THIS,  char palabra[]);
 int  contiene(const char *palabra);
 void setComando(ptrnodo * primero,char comando []);
 
-void setComando(ptrnodo *primero, char comando[]){
-    strcpy((*primero)->comando,comando);
+void setComando(ptrnodo *ultimo, char comando[]){
+    strcpy((*ultimo)->comando,comando);
 }
 
 void crearlista(){
     primero = NULL;
+    ultimo=NULL;
 }
 
-void insertar(ptrnodo *primero,  char palabra []){
+void insertar(ptrnodo *primero,  char palabra [],ptrnodo *ultimo){
     ptrnodo nuevo = (ptrnodo)malloc(sizeof(nodo));
     char palabra1 [1200]={};
     strcpy(palabra1,palabra);
     if(nuevo!=NULL){
+     size++;
      iniciar(&nuevo,palabra);
-     nuevo->sig=(*primero);
-     (*primero)=nuevo;
+     if((*primero)==NULL&&(*ultimo)==NULL){
+          nuevo->sig = NULL;
+         (*primero)=nuevo;
+         (*ultimo)=nuevo;
+     }else{
+         nuevo->sig=(*ultimo)->sig;
+         (*ultimo)->sig=nuevo;
+         (*ultimo)=nuevo;
+     }
+
     }else{
         printf("An error has ocurred");
     }
