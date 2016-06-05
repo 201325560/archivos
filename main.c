@@ -25,12 +25,7 @@ int main(void)
     //correr();
     correr();
     correr3();
-    ejecutar_crear_disco(&aux);
-    printf("%s",ARCHIVO->path);
-    printf("\n");
-    printf("%i",ARCHIVO->size);
-    printf("\n");
-    printf("%i",ARCHIVO->unit);
+    principal(&aux);
     //}while(strcmp(texto,"0")==1);
 
 
