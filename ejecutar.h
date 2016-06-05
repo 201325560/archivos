@@ -8,8 +8,8 @@
 #include <strings.h>
 void principal(ptrnodo*abc);
 void eliminar(ptrnodo*abc);
-void disco_nuevo(ptrnodo*aux);
-void ultimo(ptrArchivo *aux);
+void aaaa(ptrnodo *aux);
+void ahora_si(ptrArchivo *aux);
 void correr();
 void correr3();
 const char* SIZE="-size";
@@ -34,7 +34,7 @@ void principal(ptrnodo *abc){
         strcpy(pa,(*abc)->palabra);
         if(strcmp(pa,MKDISK)==0){
             (*abc)=(*abc)->sig;
-           disco_nuevo(abc);
+           aaaa(abc);
         }else if(strcmp(pa,RMDISK)==0){
             (*abc)=(*abc)->sig;
             eliminar(abc);
@@ -70,8 +70,7 @@ void eliminar(ptrnodo *aux){
     calcularsize(&ARCHIVO);
 
 }
-
-void disco_nuevo(ptrnodo *aux){
+void aaaa(ptrnodo*aux){
     int c =0;
     int fin2=4;
     char pa [1200]={};
@@ -91,29 +90,32 @@ void disco_nuevo(ptrnodo *aux){
         (*aux)=(*aux)->sig;
 
     }
-    ultimo(&ARCHIVO);
+    ahora_si(&ARCHIVO);
 }
 
-
-
-void ultimo(ptrnodo*aux){
-    printf("\nse creara un disco\n");
-                char*dire="";
-                char*p=" dd if=/dev/zero of=";
-                char*p1="bs= ";
-                char*p2=" count=1 ";
-                strcat(dire,p);
-                strcat(dire,ARCHIVO->path);
-               strcat(dire,p1);
-                strcat(dire,ARCHIVO->size);
-                strcat(dire,p2);
-                char cap[25]="";
-             //  itoa(totalD,cap,10);
-                strcat(dire,cap);
-                //printf("\n%s",dire);
-                char*pr="dd if=/dev/zero of=/home/daniel/prueba.txt bs=1024 count=1";
-                printf("%s",dire);
-                system(dire);
+void ahora_si(ptrArchivo*aux){
+    char dire[1200]={};
+    char*p=" dd if=/dev/zero of= ";
+    char*p1="bs= ";
+    char*espacio=" ";
+    char*p2=" count=1 ";
+    char *pat="";
+    pat=(*aux)->path;
+    strcat(dire,p);
+    strcat(dire,pat);
+    strcat(dire,espacio);
+   strcat(dire,p1);
+    char cap[25]="";
+  //  itoa(totalD,cap,10);
+    sprintf(cap,"%d",(*aux)->size);
+    strcat(dire,cap);
+    strcat(dire,espacio);
+    strcat(dire,p2);
+    char cap[25]=" ";
+    strcat(dire,cap);
+    //char*pr="dd if=/dev/zero of=/home/daniel/prueba.txt bs=1024 count=1";
+    printf("%s",dire);
+    system(dire);
 
 }
 
