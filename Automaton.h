@@ -25,13 +25,14 @@ static int numeros [] = {'0','1','2','3','4','5','6','7','8','9'};
 static char simbolos []= {};
 static int ESTADO=0;
 static int salto_linea = (int)'\n';
+static int comentario = (int)'#';
 static int espacio_blanco = (int)' ';
 static int Esletra(char letra);
 static int Esreservada(char * palabra);
 static int Esnumero(char numero);
 static void minusculas(char *s);
 char * stchcat(char cadena[], char chr);
-
+int flag=0;
 
 void lexer(char buffer []);
 void leer(char buffer[]);
@@ -49,14 +50,18 @@ void lexer(char buffer [] ){
         case 0:
             if((int)(buffer[i])==salto_linea){
               ESTADO=0;
+              flag=0;
             }else if((int)(buffer[i])==espacio_blanco){
               ESTADO=0;
             }else if(Esletra(buffer[i])==1||Esnumero(buffer[i])){
                 dato[pos_vector++]=buffer[i];
                 ESTADO=1;
+            }else if((int)buffer[i]==comentario){
+                flag=1;
             }else if((int)buffer[i]==(int)'/'){
-                dato[pos_vector++]=buffer[i];
-                ESTADO=1;
+                //dato[pos_vector++]=buffer[i];//aki creo q no tendria q guardar esto
+                pos_vector=0;
+                ESTADO=0;
             }else if((int)buffer[i]==(int)'.'){
                 dato[pos_vector++]=buffer[i];
                 ESTADO=1;
@@ -71,24 +76,32 @@ void lexer(char buffer [] ){
             break;
         case 1:
             if((int)(buffer[i])==salto_linea||(int)(buffer[i])==espacio_blanco){
+
                 if(Esreservada(&dato[0])==1)
                   {
                     insertar(&primero,dato,&ultimo);
+                    flag=0;
+                    pos_vector=0;
+                    ESTADO=0;
+                    limpiar_vector(dato);
                   }else{
+                    if(flag==0){
                     printf("%s","The token found ist'n a keyword");
                     printf("%s","\n");
                     printf("%s","ERRONEUS TOKEN: ");
                     printf("%s",&dato[0]);
                     printf("%s","\n");
+                    }
+                    pos_vector=0;
+                    ESTADO=0;
+                    limpiar_vector(dato);
                   }
 
-                pos_vector=0;
-                ESTADO=0;
-                limpiar_vector(dato);
             }else if(Esletra((buffer[i]))==1||Esnumero(buffer[i])==1){
                 dato[pos_vector++]=buffer[i];
             }else if((int)buffer[i]==(int)'/'){
-                dato[pos_vector++]=buffer[i];
+                //dato[pos_vector++]=buffer[i];//ni esto iria
+                pos_vector=0;
             }else if((int)buffer[i]==(int)'.'){
                 dato[pos_vector++]=buffer[i];
             }else if((int)buffer[i]==(int)':'){
@@ -97,6 +110,7 @@ void lexer(char buffer [] ){
                     pos_vector=0;
                     ESTADO=3;
                 }else{
+                    if(flag==0){
                     printf("%s","The token found ist'n a keyword");
                     printf("%s","\n");
                     printf("%s","ERRONEUS TOKEN: ");
@@ -104,6 +118,7 @@ void lexer(char buffer [] ){
                     printf("%s","\n");
                     pos_vector=0;
                     ESTADO=0;
+                    }
                 }
                 limpiar_vector(dato);
             }
@@ -112,7 +127,11 @@ void lexer(char buffer [] ){
             if((int)buffer[i]!=(int)'\"'){
                 dato[pos_vector++]=buffer[i];
             }else if ((int)buffer[i]=='\"'||(int)buffer[i]==salto_linea){
+                dato[pos_vector++]=buffer[i];
+                if(flag==0){
                 setComando(&ultimo,dato);
+                }
+                flag=0;
                 pos_vector=0;
                 limpiar_vector(dato);
                 ESTADO=0;
@@ -120,21 +139,29 @@ void lexer(char buffer [] ){
             break;
         case 3:
             if((int)(buffer[i])==salto_linea||(int)(buffer[i])==espacio_blanco){
-                setComando(&ultimo,dato);
+               if(flag==0){
+                   setComando(&ultimo,dato);
+               }
+               flag=0;
                 pos_vector=0;
                 ESTADO=0;
                 limpiar_vector(dato);
             }else if(Esletra((buffer[i]))==1||Esnumero(buffer[i])==1){
                 dato[pos_vector++]=buffer[i];
             }else if((int)buffer[i]==(int)'/'){
-                dato[pos_vector++]=buffer[i];
+                //dato[pos_vector++]=buffer[i];//aki tampoco iria esto creo
+                pos_vector=0;
             }else if((int)buffer[i]==(int)'.'){
                 dato[pos_vector++]=buffer[i];
             }else if((int)buffer[i]==(int)':'){
                 pos_vector=0;
                 limpiar_vector(dato);
             }else if((int)buffer[i]==(int)'\"'){
+                dato[pos_vector++]=buffer[i];
                 ESTADO=2;
+            }//aki iria un si es igual a "-" para saber si viene numeros negativos
+            else if((int)buffer[i]==(int)'-'){
+                dato[pos_vector++]=buffer[i];
             }
             break;
         }
