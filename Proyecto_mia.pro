@@ -9,5 +9,7 @@ HEADERS += \
     Automaton.h \
     lista.h \
     archivo.h \
-    ejecutar.h
+    ejecutar.h \
+    estructuras.h \
+    listaEBR.h
 

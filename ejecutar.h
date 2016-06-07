@@ -8,8 +8,10 @@
 #include <strings.h>
 void principal(ptrnodo*abc);
 void eliminar(ptrnodo*abc);
-void disco_nuevo(ptrnodo*aux);
-void ultimo(ptrArchivo *aux);
+void aaaa(ptrnodo *aux);
+void ahora_si(ptrArchivo *aux);
+int generar_random();
+void ejecutar_fdisk(ptrnodo*aux);
 void correr();
 void correr3();
 const char* SIZE="-size";
@@ -34,12 +36,13 @@ void principal(ptrnodo *abc){
         strcpy(pa,(*abc)->palabra);
         if(strcmp(pa,MKDISK)==0){
             (*abc)=(*abc)->sig;
-           disco_nuevo(abc);
+           aaaa(abc);
         }else if(strcmp(pa,RMDISK)==0){
             (*abc)=(*abc)->sig;
             eliminar(abc);
         }else if(strcmp(pa,FDISK)==0){
-
+            (*abc)=(*abc)->sig;
+            ejecutar_fdisk(abc);
         }
         (*abc)=(*abc)->sig;
     }
@@ -70,8 +73,7 @@ void eliminar(ptrnodo *aux){
     calcularsize(&ARCHIVO);
 
 }
-
-void disco_nuevo(ptrnodo *aux){
+void aaaa(ptrnodo*aux){
     int c =0;
     int fin2=4;
     char pa [1200]={};
@@ -79,7 +81,13 @@ void disco_nuevo(ptrnodo *aux){
         strcpy(pa,(*aux)->palabra);
         if(strcmp(pa,SIZE)==0){
             //aki comparar si size es mayor q cero.. q ejecute sino muestra error
+            int tam=0;
+            tam=atoi((*aux)->comando);
+            if(tam>0){
             setSize(&ARCHIVO,atoi((*aux)->comando));
+            }else{
+                printf("error, el tamaño del disco tiene q ser mayor a cero");
+            }
         }else if(strcmp(pa,UNIT)==0){
             char v [1200];
             strcpy(v,(*aux)->comando);
@@ -88,33 +96,60 @@ void disco_nuevo(ptrnodo *aux){
             setPath(&ARCHIVO,(*aux)->comando);
         }
         c++;
+        char pa[1200]={};
+        strcpy(pa,(*aux)->palabra);
+        if(strcmp(pa,MKDISK)==0){
+            break;
+        }else if(strcmp(pa,RMDISK)==0){
+            break;
+        }else if(strcmp(pa,FDISK)==0){
+            break;
+        }
         (*aux)=(*aux)->sig;
 
     }
-    ultimo(&ARCHIVO);
+    calcularsize(&ARCHIVO);
+    ahora_si(&ARCHIVO);//crea el disco
 }
 
-
-
-void ultimo(ptrnodo*aux){
-    printf("\nse creara un disco\n");
-                char*dire="";
-                char*p=" dd if=/dev/zero of=";
-                char*p1="bs= ";
-                char*p2=" count=1 ";
-                strcat(dire,p);
-                strcat(dire,ARCHIVO->path);
-               strcat(dire,p1);
-                strcat(dire,ARCHIVO->size);
-                strcat(dire,p2);
-                char cap[25]="";
-             //  itoa(totalD,cap,10);
-                strcat(dire,cap);
-                //printf("\n%s",dire);
-                char*pr="dd if=/dev/zero of=/home/daniel/prueba.txt bs=1024 count=1";
-                printf("%s",dire);
-                system(dire);
+void ahora_si(ptrArchivo*aux){
+    char dire[1200]={};
+    char*p="dd if=/dev/zero of=";
+    char*p1="bs=";
+    char*espacio=" ";
+    char*p2=" count=1 ";
+    char *pat="";
+    char carpetas[1200]={};
+    char *car="mkdir -p ";
+    pat=(*aux)->path;
+    strcat(dire,p);
+    strcat(dire,pat);
+    strcat(carpetas,car);
+    strcat(carpetas,pat);
+    strcat(dire,espacio);
+    strcat(dire,p1);
+    char cap[25]="";
+  //  itoa(totalD,cap,10);
+    sprintf(cap,"%d",(*aux)->size);
+    strcat(dire,cap);
+    strcat(dire,espacio);
+    strcat(dire,p2);
+    printf("%s",&dire[0]);
+    char*pru=dire;
+    //system(carpetas);//aki se manda el comando para crear la carpeta(  mkdir -p "path"     )
+    system(pru);
 
 }
+
+ejecutar_fdisk(ptrnodo *aux){
+
+}
+
+int generar_random(){
+    int num=0;
+    num=rand()%10000;
+    return num;
+}
+
 
 #endif // EJECUTAR_H
